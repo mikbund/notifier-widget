@@ -1,5 +1,8 @@
 package dk.notfound.notifier;
 
+import dk.notfound.notifier.config.ConfigLoader;
+import dk.notfound.notifier.controller.EventNotifierHandler;
+import dk.notfound.notifier.controller.NotifierUpdater;
 import dk.notfound.notifier.model.Event;
 import dk.notfound.notifier.model.EventRepository;
 import dk.notfound.notifier.widget.EventViewerWidget;
@@ -27,13 +30,16 @@ public class Main {
 
 
     public static void main(String[] args) {
-	// write your code here
 
 
-
+        ConfigLoader configLoader = new ConfigLoader();
+        configLoader.printConfiguration();
         EventViewerWidget eventViewerWidget = new EventViewerWidget();
+        NotifierUpdater notifierUpdater = new NotifierUpdater(eventViewerWidget);
+
         eventViewerWidget.runWidget();
 
+        notifierUpdater.run();
 
 
 
