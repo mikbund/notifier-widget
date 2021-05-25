@@ -1,6 +1,6 @@
 package dk.notfound.notifier.config;
 
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -16,24 +16,15 @@ public class ConfigLoader
     private Integer pollFrequency = 30;
 
     private Properties properties = new Properties();
-    private String filePath = "config.properties";
+    private String filePath = System.getProperty("user.dir") + "/"+ "config.properties";
 
 
     public ConfigLoader() {
         this.filePath=filePath;
 
-
         try {
 
-            ResourceLoader(filePath);
             properties.load(getResource());
-
-/*            user = properties.getProperty("user");
-            listUnhandledEvents = properties.getProperty("listUnhandledEvents");
-            listAllEvents = properties.getProperty("listAllEvents");
-            acknowledgeEvent = properties.getProperty("acknowledgeEvent");
-*/
-
 
         } catch(Exception e) {
             System.out.println("Unable to find config: " + e);
@@ -60,6 +51,7 @@ public class ConfigLoader
     public  void printConfiguration() {
         Enumeration em = properties.keys();
         System.out.println("**** Configuration ****");
+        System.out.println("File config:" + filePath);
         while(em.hasMoreElements()) {
 
             String key = (String) em.nextElement();
@@ -106,16 +98,25 @@ public class ConfigLoader
     }
 
     public InputStream getResource() throws NoSuchFileException
+
     {
+
+/*
         ClassLoader classLoader = this.getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(filePath);
+*/
 
-        if(inputStream == null)
-        {
-            throw new NoSuchFileException("Resource file not found. Note that the current directory is the source folder!");
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(new File(filePath));
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
-        return inputStream;
+
+        return fileInputStream;
     }
 
 

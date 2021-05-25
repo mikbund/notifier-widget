@@ -36,7 +36,6 @@ public class EventViewerWidget {
 
     public EventViewerWidget() {
 
-
         jButtonAcknowledgeEvent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,14 +53,14 @@ public class EventViewerWidget {
         });
     }
 
-
     public void runWidget() {
 
         jTableEventList.setModel(model);
-        String[] columns = {"Id", "Created" , "Service"};
+        String[] columns = {"Id", "Created" , "Service", "Event"};
         model.addColumn(columns[0]);
         model.addColumn(columns[1]);
         model.addColumn(columns[2]);
+        model.addColumn(columns[3]);
 
 
 
@@ -87,7 +86,7 @@ public class EventViewerWidget {
 
     public void updateTableWithEvents() {
         for(Event e: eventCollection) { // fills with new data
-            String[] row= {e.getId().toString(), e.getCreated_ts().toString(), e.getEventRaw()};
+            String[] row= {e.getId().toString(), e.getCreated_ts().toString(), e.getServiceIdentifier(), e.getEventRaw()};
             model.addRow(row);
         }
     }

@@ -31,6 +31,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        String dir = System.getProperty("user.dir");
+        System.out.println("Working directory: " + dir);
+
 
         ConfigLoader configLoader = new ConfigLoader();
         configLoader.printConfiguration();
