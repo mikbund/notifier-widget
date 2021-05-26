@@ -43,7 +43,6 @@ public class EventViewerWidget {
             }
         });
 
-
         jButtonMuteEvents.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
