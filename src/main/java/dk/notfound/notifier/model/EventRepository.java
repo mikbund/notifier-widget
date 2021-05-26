@@ -27,7 +27,7 @@ public class EventRepository {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         final RestTemplate restTemplate = new RestTemplate();
 
-        //"http://localhost:8080/event",
+
         String url = configLoader.getListAllEvents();
 
         ResponseEntity<List<Event>> responseEntity =
@@ -72,22 +72,17 @@ public class EventRepository {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-
-        // http://localhost:8080/event/acknowledge/
         String url = configLoader.getAcknowledgeEvent();
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String eventAsJson = objectMapper.writeValueAsString(event);
 
-
             HttpEntity<String> request =
                     new HttpEntity<String>(eventAsJson, headers);
 
             ResponseEntity<String> responseEntityStr = restTemplate.
                     postForEntity(url+"/"+event.getId(), request, String.class);
-
-            //JsonNode root = objectMapper.readTree(responseEntityStr.getBody());
 
 
         } catch (Exception e) {

@@ -24,7 +24,15 @@ public class NotifierUpdater extends Thread {
 
     public void run() {
         while(!Thread.currentThread().isInterrupted()) {
-            checkUnhandledEventsAndNotify();
+
+           try {
+               checkUnhandledEventsAndNotify();
+           } catch (Exception e) {
+               System.out.println("Error with connection");
+               e.printStackTrace();
+
+           }
+
 
             try {
 

@@ -8,12 +8,13 @@ import java.util.HashMap;
 public class ConfigLoader
 {
 
-
-    private String user="Foo";
-    private String listUnhandledEvents = "http://localhost:8080/event/unhandled/";
-    private String listAllEvents = "http://localhost:8080/event/";
-    private String acknowledgeEvent = "http://localhost:8080/event/acknowledge/";
-    private Integer pollFrequency = 30;
+/*
+    private String user;
+    private String listUnhandledEvents;
+    private String listAllEvents;
+    private String acknowledgeEvent;
+    private Integer pollFrequency;
+*/
 
     private Properties properties = new Properties();
     private String filePath = System.getProperty("user.dir") + "/"+ "config.properties";
@@ -66,25 +67,24 @@ public class ConfigLoader
     }
 
     public String getUser() {
-        return user;
+        return properties.getProperty("user");
     }
 
     public String getListUnhandledEvents() {
-        return listUnhandledEvents;
+
+        return properties.getProperty("listUnhandledEvents");
     }
 
     public String getListAllEvents() {
-        return listAllEvents;
+        return properties.getProperty("listAllEvents");
     }
 
     public String getAcknowledgeEvent() {
-        return acknowledgeEvent;
+        return properties.getProperty("acknowledgeEvent");
     }
 
     public Integer getPollFrequency() {
-
-        pollFrequency = Integer.decode(properties.getProperty("pollFrequency"));
-        return this.pollFrequency;
+        return Integer.decode(properties.getProperty("pollFrequency"));
     }
 
     public void ResourceLoader(String filePath)
