@@ -39,7 +39,9 @@ public class EventViewerWidget {
         jButtonAcknowledgeEvent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                eventNotifierHandler.acknowledgeAllEvents();
+                //eventNotifierHandler.acknowledgeAllEvents();
+
+                acknowledgeAllEvents();
             }
         });
 
@@ -51,6 +53,8 @@ public class EventViewerWidget {
             }
         });
     }
+
+
 
     public void runWidget() {
 
@@ -125,7 +129,7 @@ public class EventViewerWidget {
     public void bringToFront() {
         frame.setExtendedState(JFrame.NORMAL);
         frame.setAlwaysOnTop(true);
-        frame.requestFocus();
+        //frame.requestFocus();
 
     }
 
@@ -142,6 +146,11 @@ public class EventViewerWidget {
         setjButtonMuteEventState();
 
 
+    }
+
+    public void acknowledgeAllEvents() {
+        eventNotifierHandler.acknowledgeAllEvents();
+        frame.setAlwaysOnTop(false);
     }
 
 

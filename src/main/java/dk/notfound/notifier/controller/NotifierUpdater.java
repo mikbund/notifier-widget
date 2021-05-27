@@ -36,8 +36,6 @@ public class NotifierUpdater extends Thread {
 
             try {
 
-
-
                 sleep(configloader.getPollFrequency()*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
