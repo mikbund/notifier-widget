@@ -8,13 +8,6 @@ import java.util.HashMap;
 public class ConfigLoader
 {
 
-/*
-    private String user;
-    private String listUnhandledEvents;
-    private String listAllEvents;
-    private String acknowledgeEvent;
-    private Integer pollFrequency;
-*/
 
     private Properties properties = new Properties();
     private String filePath = System.getProperty("user.dir") + "/"+ "config.properties";
@@ -30,7 +23,6 @@ public class ConfigLoader
         } catch(Exception e) {
             System.out.println("Unable to find config: " + e);
         }
-
     }
 
 
@@ -61,6 +53,8 @@ public class ConfigLoader
         }
     }
 
+
+    public String getWiki() { return properties.getProperty("wiki"); }
 
     public String getProperty(String property) {
         return properties.getProperty(property);

@@ -43,6 +43,30 @@ public class EventRepository {
         return events;
     }
 
+    public Event getEvent(Long id) {
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        final RestTemplate restTemplate = new RestTemplate();
+
+        String url = configLoader.getListAllEvents() + "/" + id.toString();
+
+        ResponseEntity<Event> responseEntity =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<Event>() {}
+                );
+
+        Event event = responseEntity.getBody();
+        return event;
+    }
+
+
+
+
     public Collection<Event> getUnhandledEvents() {
 
         HttpHeaders headers = new HttpHeaders();
@@ -66,13 +90,14 @@ public class EventRepository {
     }
 
 
-    public Collection<Event> acknowledgeEvent(Event event)  {
+    public void acknowledgeEvent(Event event)  {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         String url = configLoader.getAcknowledgeEvent();
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -89,23 +114,9 @@ public class EventRepository {
             System.out.println("Exception" + e.toString());
         }
 
-
-
-
-
-
-
-
-
-
-        return null;
     }
 
 
-    public Collection<Event> acknowledgeEvent(Long id) {
-
-        return null;
-    }
 
 
 
