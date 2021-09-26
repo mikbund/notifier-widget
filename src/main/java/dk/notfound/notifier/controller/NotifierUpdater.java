@@ -13,12 +13,8 @@ public class NotifierUpdater extends Thread {
     private EventViewerWidget eventViewerWidget;
 
 
-
-
     public NotifierUpdater(EventViewerWidget eventViewerWidget) {
         this.eventViewerWidget = eventViewerWidget;
-
-
 
     }
 

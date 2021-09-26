@@ -69,6 +69,8 @@ public class ConfigLoader
         return properties.getProperty("listUnhandledEvents");
     }
 
+    public String getEventResponsible() { return properties.getProperty("eventResponsible"); }
+
     public String getListAllEvents() {
         return properties.getProperty("listAllEvents");
     }

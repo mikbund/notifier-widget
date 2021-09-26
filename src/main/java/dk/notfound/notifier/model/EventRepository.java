@@ -97,6 +97,8 @@ public class EventRepository {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         String url = configLoader.getAcknowledgeEvent();
+        event.setEventResponsible(configLoader.getEventResponsible());
+
 
 
         ObjectMapper objectMapper = new ObjectMapper();

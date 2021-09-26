@@ -10,6 +10,7 @@ public class Event {
     String serviceIdentifier;
     Boolean acknowledged;
     String eventRaw;
+    String eventResponsible;
     Timestamp created_ts;
     Timestamp updated_ts;
 
@@ -36,6 +37,14 @@ public class Event {
     }
     //         "updated_ts": "2021-05-23T08:48:09.952096",
 
+    public String getEventResponsible() {
+        return eventResponsible;
+    }
+
+    public void setEventResponsible(String eventResponsible) {
+        this.eventResponsible = eventResponsible;
+    }
+
     public Timestamp getCreated_ts() {
         return created_ts;
     }
@@ -46,8 +55,9 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Id: " + getId() + "\nAcknowledged: " + getAcknowledged() + "\nEvent: " + getEventRaw();
+        return "Id: " + getId() + "\nAcknowledged: " + getAcknowledged() + "\nEvent: " + getEventRaw() + "\nEventResponsible: " + getEventResponsible();
     }
+
 
 
 
