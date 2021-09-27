@@ -99,29 +99,12 @@ public class EventRepository {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String url = configLoader.getAcknowledgeEvent() + "/" + eventId;
+    //    String url = configLoader.getAcknowledgeEvent() + "/" + eventId;
+        String url = configLoader.getAcknowledgeEvent().replace("{id}",eventId.toString());
+        System.out.println("URL acknowledge event: " + url);
         event.setEventResponsible(configLoader.getEventResponsible());
 
         restTemplate.put(url, event, Event.class);
-
-        /*
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String eventAsJson = objectMapper.writeValueAsString(event);
-
-            HttpEntity<String> request =
-                    new HttpEntity<String>(eventAsJson, headers);
-
-            ResponseEntity<String> responseEntityStr = restTemplate.
-                    postForEntity(url+"/"+event.getId(), request, String.class);
-
-
-        } catch (Exception e) {
-            System.out.println("Exception" + e.toString());
-        }
-
-         */
 
     }
 
