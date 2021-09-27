@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import dk.notfound.notifier.config.ConfigLoader;
@@ -92,14 +93,18 @@ public class EventRepository {
 
     public void acknowledgeEvent(Event event)  {
 
+        Long eventId = event.getId();
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String url = configLoader.getAcknowledgeEvent();
+        String url = configLoader.getAcknowledgeEvent() + "/" + eventId;
         event.setEventResponsible(configLoader.getEventResponsible());
 
+        restTemplate.put(url, event, Event.class);
 
+        /*
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -116,10 +121,8 @@ public class EventRepository {
             System.out.println("Exception" + e.toString());
         }
 
+         */
+
     }
-
-
-
-
 
 }
