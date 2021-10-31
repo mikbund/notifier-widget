@@ -1,5 +1,6 @@
 package dk.notfound.notifier.widget;
 
+import dk.notfound.notifier.controller.ServiceEntityHandler;
 import dk.notfound.notifier.model.Event;
 import dk.notfound.notifier.config.ConfigLoader;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import dk.notfound.notifier.controller.EventNotifierHandler;
+import dk.notfound.notifier.model.ServiceEntity;
 
 public class EventViewerWidget {
 
@@ -36,15 +38,22 @@ public class EventViewerWidget {
     private JTable jTableResolvedEvents;
     private JPanel jPanelResolved;
     private JPanel panelEvents;
-    private JPanel panelEntities;
-    private JTable tableEntities;
+    private JPanel panelServiceEntities;
+    private JTable jTableServiceEntities;
     private JButton saveButton;
-    private JButton refreshButton;
+    private JButton reloadButton;
+    private JCheckBox acknowledgeEventsOnTimerCheckBox;
+    private JCheckBox acknowledgeOnReceptionCheckBox;
+    private JFormattedTextField formattedTextField2;
+    private JFormattedTextField formattedTextField1;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
+    private ServiceEntityHandler serviceEntityHandler = new ServiceEntityHandler();
+
 
     private Boolean muteNotification = false;
     DefaultTableModel model = new DefaultTableModel();
     DefaultTableModel modelResolvedEvents = new DefaultTableModel();
+    DefaultTableModel modelServiceEntities = new DefaultTableModel();
     private Collection<Event> eventCollection = new ArrayList();
 
     public EventViewerWidget() {
@@ -87,12 +96,11 @@ public class EventViewerWidget {
                         displayAcknowledgedEvents();
                         ;
                     case 2:
+                        displayServiceEntities();
                         ;
                 }
             }
         });
-
-
 
     }
 
@@ -100,26 +108,23 @@ public class EventViewerWidget {
 
 
         String[] columns = {"Id", "Created" , "Service", "Event"};
-
-
         jTableEventList.setModel(model);
-        model.addColumn(columns[0]);
-        model.addColumn(columns[1]);
-        model.addColumn(columns[2]);
-        model.addColumn(columns[3]);
+        for(String s: columns) {
+            model.addColumn(s);
+        }
 
-
-        String[] columnsResolvedTbl = {"Id", "Created", "Resolved", "Service", "Responsible", "Event"};
+        String[] columnsResolvedTbl = {"Id", "Created", "Resolved", "Group", "Service", "Responsible", "Event"};
         jTableResolvedEvents.setModel(modelResolvedEvents);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[0]);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[1]);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[2]);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[3]);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[4]);
-        modelResolvedEvents.addColumn(columnsResolvedTbl[5]);
+        for(String s: columnsResolvedTbl) {
+            modelResolvedEvents.addColumn(s);
+        }
 
+        String[] ColumnServiceEntityTbl = {"Id",  "ServiceIdentifier", "eventAcknowledgeTimer", "autoAcknowledgeEventOnReception", "autoAcknowledgeEventOnReceptionUntilTs", "autoAcknowledgeEventOnTimer"};
+        jTableServiceEntities.setModel(modelServiceEntities);
 
-
+        for(String s: ColumnServiceEntityTbl) {
+            modelServiceEntities.addColumn(s);
+        }
 
         frame = new JFrame("Widget");
         frame.setContentPane(alertPanel);
@@ -139,22 +144,50 @@ public class EventViewerWidget {
     }
 
 
+
+    public void displayServiceEntities() {
+
+//        String[] ColumnServiceEntityTbl = {"Id",  "ServiceIdentifier", "eventAcknowledgeTimer", "autoAcknowledgeEventOnReception", "autoAcknowledgeEventOnReceptionUntilTs", "autoAcknowledgeEventOnTimer"};
+
+        Collection<ServiceEntity> serviceEntities = serviceEntityHandler.getServiceEntityCollection();
+
+        modelServiceEntities.setRowCount(0);
+
+        for(ServiceEntity se: serviceEntities) {
+
+                    String[] row = {
+                                        se.getId().toString(),
+                                        se.getServiceIdentifier(),
+                                        se.getAutoAcknowledgeEventOnReception().toString(),
+                                        se.getAutoAcknowledgeEventOnReceptionUntilTs().toString(),
+                                        se.getEventAcknowledgeTimer().toString(),
+                                        se.getAutoAcknowledgeEventOnTimer().toString()
+                                    };
+            modelServiceEntities.addRow(row);
+        }
+
+    }
+
     public void displayAcknowledgedEvents() {
-        //String[] columnsResolvedTbl = {"Id", "Created", "Resolved", "Service", "Responsible", "Event"};
 
         Collection<Event> events = eventNotifierHandler.getAcknowledgedEvents();
+        String groupName;
+
+
 
         modelResolvedEvents.setRowCount(0);
         for(Event event: events) {
 
-            String[] row = {event.getId().toString(), event.getCreated_ts().toString(), event.getUpdated_ts().toString(), event.getServiceIdentifier(),event.getEventResponsible() , event.getEventRaw()};
+                try {
+                    groupName=event.getGroup().getGroupName();
+                } catch(NullPointerException e)  {
+                    groupName="";
+                }
+
+            String[] row = {event.getId().toString(), event.getCreated_ts().toString(), event.getUpdated_ts().toString(), groupName, event.getServiceIdentifier(),event.getEventResponsible() , event.getEventRaw()};
             this.modelResolvedEvents.addRow(row);
         }
-
-
     }
-
-
 
     public void setUpdateInformationLabel() {
 

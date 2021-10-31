@@ -14,6 +14,7 @@ public class Event {
     Timestamp created_ts;
     Timestamp updated_ts;
 
+    Group group;
 
     public Long getId() {
         return id;
@@ -51,6 +52,14 @@ public class Event {
 
     public Timestamp getUpdated_ts() {
         return updated_ts;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group=group;
     }
 
     @Override

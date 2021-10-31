@@ -87,6 +87,10 @@ public class ConfigLoader
         return Integer.decode(properties.getProperty("pollFrequency"));
     }
 
+    public String getListServiceEntities() {
+        return properties.getProperty("listServiceEntities");
+    }
+
     public void ResourceLoader(String filePath)
     {
         this.filePath = filePath;
@@ -113,8 +117,6 @@ public class ConfigLoader
 
         return fileInputStream;
     }
-
-
 
 
 }
