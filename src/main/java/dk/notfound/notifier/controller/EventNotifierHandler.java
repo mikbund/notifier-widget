@@ -40,6 +40,14 @@ public class EventNotifierHandler {
     }
 
 
+    public Collection<Event> getAcknowledgedEvents() {
+        return eventRepository.getAcknowledgedEvents();
+    }
+
+
+
+
+
 
     public void acknowledgeAllEvents() {
 

@@ -67,6 +67,30 @@ public class EventRepository {
 
 
 
+    public Collection<Event> getAcknowledgedEvents() {
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        final RestTemplate restTemplate = new RestTemplate();
+
+        String url = configLoader.getListAcknowledgedEvents();
+
+        ResponseEntity<List<Event>> responseEntity =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<Event>>() {}
+                );
+
+        List<Event> events = responseEntity.getBody();
+
+        return events;
+    }
+
+
+
 
     public Collection<Event> getUnhandledEvents() {
 

@@ -75,6 +75,10 @@ public class ConfigLoader
         return properties.getProperty("listAllEvents");
     }
 
+    public String getListAcknowledgedEvents() {
+        return properties.getProperty("listAcknowledgedEvents");
+    }
+
     public String getAcknowledgeEvent() {
         return properties.getProperty("acknowledgeEvent");
     }
@@ -96,11 +100,6 @@ public class ConfigLoader
     public InputStream getResource() throws NoSuchFileException
 
     {
-
-/*
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(filePath);
-*/
 
         FileInputStream fileInputStream = null;
         try {

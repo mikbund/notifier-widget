@@ -26,12 +26,9 @@ public class NotifierUpdater extends Thread {
            } catch (Exception e) {
                System.out.println("Error with connection");
                e.printStackTrace();
-
            }
 
-
             try {
-
                 sleep(configloader.getPollFrequency()*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();

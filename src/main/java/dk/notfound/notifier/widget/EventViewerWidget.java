@@ -4,19 +4,17 @@ import dk.notfound.notifier.model.Event;
 import dk.notfound.notifier.config.ConfigLoader;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import dk.notfound.notifier.controller.EventNotifierHandler;
 
@@ -24,21 +22,29 @@ public class EventViewerWidget {
 
     private ConfigLoader configLoader = new ConfigLoader();
     private JFrame frame;
-    private JPanel panel;
+    private JPanel alertPanel;
     private JTable jTableEventList;
     private JTableHeader jTableEventHeader;
     private JButton jButtonAcknowledgeEvent;
     private JButton jButtonMuteEvents;
     private JLabel labelLastUpdated;
-    private JPanel labelEvents;
     private JPanel panelStatus;
     private JLabel labelStatus;
     private JButton jButtonAcknowledgeSelected;
     private JButton jButtonOpenLink;
+    private JTabbedPane tabbedPane;
+    private JTable jTableResolvedEvents;
+    private JPanel jPanelResolved;
+    private JPanel panelEvents;
+    private JPanel panelEntities;
+    private JTable tableEntities;
+    private JButton saveButton;
+    private JButton refreshButton;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
 
     private Boolean muteNotification = false;
     DefaultTableModel model = new DefaultTableModel();
+    DefaultTableModel modelResolvedEvents = new DefaultTableModel();
     private Collection<Event> eventCollection = new ArrayList();
 
     public EventViewerWidget() {
@@ -70,19 +76,53 @@ public class EventViewerWidget {
                 openLinkInBrowser();
             }
         });
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                switch (tabbedPane.getSelectedIndex()) {
+                    case 0:
+                        ;
+                    case 1:
+                        displayAcknowledgedEvents();
+                        ;
+                    case 2:
+                        ;
+                }
+            }
+        });
+
+
+
     }
 
     public void runWidget() {
 
-        jTableEventList.setModel(model);
+
         String[] columns = {"Id", "Created" , "Service", "Event"};
+
+
+        jTableEventList.setModel(model);
         model.addColumn(columns[0]);
         model.addColumn(columns[1]);
         model.addColumn(columns[2]);
         model.addColumn(columns[3]);
 
+
+        String[] columnsResolvedTbl = {"Id", "Created", "Resolved", "Service", "Responsible", "Event"};
+        jTableResolvedEvents.setModel(modelResolvedEvents);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[0]);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[1]);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[2]);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[3]);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[4]);
+        modelResolvedEvents.addColumn(columnsResolvedTbl[5]);
+
+
+
+
         frame = new JFrame("Widget");
-        frame.setContentPane(panel);
+        frame.setContentPane(alertPanel);
         frame.setBounds(300,300,300,300);
         frame.setTitle("Event notifier");
         frame.setSize(600,300);
@@ -97,6 +137,24 @@ public class EventViewerWidget {
         this.model.addRow(row);
 
     }
+
+
+    public void displayAcknowledgedEvents() {
+        //String[] columnsResolvedTbl = {"Id", "Created", "Resolved", "Service", "Responsible", "Event"};
+
+        Collection<Event> events = eventNotifierHandler.getAcknowledgedEvents();
+
+        modelResolvedEvents.setRowCount(0);
+        for(Event event: events) {
+
+            String[] row = {event.getId().toString(), event.getCreated_ts().toString(), event.getUpdated_ts().toString(), event.getServiceIdentifier(),event.getEventResponsible() , event.getEventRaw()};
+            this.modelResolvedEvents.addRow(row);
+        }
+
+
+    }
+
+
 
     public void setUpdateInformationLabel() {
 
@@ -144,21 +202,6 @@ public class EventViewerWidget {
             } else
                 row++;
         }
-
-
-
-        /*while(row<this.model.getRowCount()) {
-            cellIdValue = Long.valueOf((String) model.getValueAt(row,0));
-
-            if(eventHashmap.containsKey(cellIdValue)==false) {
-                // removes row in table that does not exist in eventCollection
-                // we also removes them newEventHashMap - else we will get dublicates. This list contains new events not present in table
-                //this.model.removeRow(row);
-                deleteRowNum.add(row);
-            }
-                row++;
-        }*/
-
     }
 
 
@@ -201,7 +244,6 @@ public class EventViewerWidget {
     }
 
     public void acknowledgeSelectedEvent() {
-
 
         Integer id;
         String cell;
