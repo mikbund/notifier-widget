@@ -5,13 +5,13 @@ import dk.notfound.notifier.model.Event;
 import dk.notfound.notifier.config.ConfigLoader;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,12 +40,12 @@ public class EventViewerWidget {
     private JPanel panelEvents;
     private JPanel panelServiceEntities;
     private JTable jTableServiceEntities;
-    private JButton saveButton;
-    private JButton reloadButton;
-    private JCheckBox acknowledgeEventsOnTimerCheckBox;
-    private JCheckBox acknowledgeOnReceptionCheckBox;
-    private JFormattedTextField formattedTextField2;
-    private JFormattedTextField formattedTextField1;
+    private JButton jButtonSaveServiceEntity;
+    private JButton jButtonReloadServiceEntities;
+    private JCheckBox checkBoxAcknowledgeEventsOnTimer;
+    private JCheckBox checkBoxAcknowledgeOnReception;
+    private JFormattedTextField textFieldAcknowledgeTimer;
+    private JFormattedTextField textFieldAcknowledgeUntilTS;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
     private ServiceEntityHandler serviceEntityHandler = new ServiceEntityHandler();
 
@@ -75,7 +75,6 @@ public class EventViewerWidget {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acknowledgeSelectedEvent();
-
             }
         });
 
@@ -86,23 +85,104 @@ public class EventViewerWidget {
             }
         });
 
+        jButtonReloadServiceEntities.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                serviceEntityHandler.fetchServiceEntities();
+                displayServiceEntities();
+            }
+        });
+
+        jButtonSaveServiceEntity.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveServiceEntity();
+                serviceEntityHandler.fetchServiceEntities();
+                displayServiceEntities();
+            }
+        });
+
+
+
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 switch (tabbedPane.getSelectedIndex()) {
                     case 0:
-                        ;
+                        break;
+
                     case 1:
                         displayAcknowledgedEvents();
-                        ;
+                        break;
+
                     case 2:
+                        serviceEntityHandler.fetchServiceEntities();
                         displayServiceEntities();
-                        ;
+                        break;
+
                 }
             }
         });
 
+
+        jTableServiceEntities.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+                    updateServiceEntitiesTextFieldsFromTbl();
+            }
+        });
+
     }
+
+    public void saveServiceEntity() {
+
+        Integer selectedRow = jTableServiceEntities.getSelectedRow();
+        String cellValue = jTableServiceEntities.getModel().getValueAt(selectedRow,0).toString();
+        Long cellId = Long.valueOf(cellValue);
+        
+
+        ServiceEntity serviceEntity = serviceEntityHandler.getServiceEntityById(cellId);
+
+        serviceEntity.setAutoAcknowledgeEventOnReception(checkBoxAcknowledgeOnReception.isSelected());
+        serviceEntity.setAutoAcknowledgeEventOnTimer(checkBoxAcknowledgeEventsOnTimer.isSelected());
+        serviceEntity.setEventAcknowledgeTimer(Long.valueOf(textFieldAcknowledgeTimer.getText().toString().trim()));
+
+
+        serviceEntity.setAutoAcknowledgeEventOnReceptionUntilTs();
+
+
+        serviceEntityHandler.saveServiceEntity(serviceEntity);
+
+
+    }
+
+    public void updateServiceEntitiesTextFieldsFromTbl() {
+
+
+        try {
+            Long cellValue;
+            ServiceEntity serviceEntity;
+
+            cellValue = Long.valueOf(jTableServiceEntities.getModel().getValueAt(jTableServiceEntities.getSelectedRow(), 0).toString());
+
+            serviceEntity = serviceEntityHandler.getServiceEntityById(cellValue);
+            textFieldAcknowledgeTimer.setText(serviceEntity.getEventAcknowledgeTimer().toString());
+            textFieldAcknowledgeUntilTS.setText(serviceEntity.getAutoAcknowledgeEventOnReceptionUntilTs().toString());
+            checkBoxAcknowledgeEventsOnTimer.setSelected(serviceEntity.getAutoAcknowledgeEventOnTimer());
+            checkBoxAcknowledgeOnReception.setSelected(serviceEntity.getAutoAcknowledgeEventOnReception());
+        } catch(Exception e) {
+
+            textFieldAcknowledgeTimer.setText("");
+            textFieldAcknowledgeUntilTS.setText("");
+            checkBoxAcknowledgeEventsOnTimer.setSelected(false);
+            checkBoxAcknowledgeOnReception.setSelected(false);
+
+        }
+
+
+        }
+
 
     public void runWidget() {
 
@@ -119,7 +199,7 @@ public class EventViewerWidget {
             modelResolvedEvents.addColumn(s);
         }
 
-        String[] ColumnServiceEntityTbl = {"Id",  "ServiceIdentifier", "eventAcknowledgeTimer", "autoAcknowledgeEventOnReception", "autoAcknowledgeEventOnReceptionUntilTs", "autoAcknowledgeEventOnTimer"};
+        String[] ColumnServiceEntityTbl = {"Id",  "ServiceIdentifier", "autoAcknowledgeEventOnReception", "autoAcknowledgeEventOnReceptionUntilTs", "autoAcknowledgeEventOnTimer","eventAcknowledgeTimer"};
         jTableServiceEntities.setModel(modelServiceEntities);
 
         for(String s: ColumnServiceEntityTbl) {
@@ -144,26 +224,22 @@ public class EventViewerWidget {
     }
 
 
-
     public void displayServiceEntities() {
-
-//        String[] ColumnServiceEntityTbl = {"Id",  "ServiceIdentifier", "eventAcknowledgeTimer", "autoAcknowledgeEventOnReception", "autoAcknowledgeEventOnReceptionUntilTs", "autoAcknowledgeEventOnTimer"};
 
         Collection<ServiceEntity> serviceEntities = serviceEntityHandler.getServiceEntityCollection();
 
         modelServiceEntities.setRowCount(0);
 
         for(ServiceEntity se: serviceEntities) {
-
                     String[] row = {
                                         se.getId().toString(),
                                         se.getServiceIdentifier(),
                                         se.getAutoAcknowledgeEventOnReception().toString(),
                                         se.getAutoAcknowledgeEventOnReceptionUntilTs().toString(),
+                                        se.getAutoAcknowledgeEventOnTimer().toString(),
                                         se.getEventAcknowledgeTimer().toString(),
-                                        se.getAutoAcknowledgeEventOnTimer().toString()
                                     };
-            modelServiceEntities.addRow(row);
+           modelServiceEntities.addRow(row);
         }
 
     }
@@ -172,7 +248,6 @@ public class EventViewerWidget {
 
         Collection<Event> events = eventNotifierHandler.getAcknowledgedEvents();
         String groupName;
-
 
 
         modelResolvedEvents.setRowCount(0);
@@ -187,6 +262,8 @@ public class EventViewerWidget {
             String[] row = {event.getId().toString(), event.getCreated_ts().toString(), event.getUpdated_ts().toString(), groupName, event.getServiceIdentifier(),event.getEventResponsible() , event.getEventRaw()};
             this.modelResolvedEvents.addRow(row);
         }
+        // disables editing of table
+        jTableResolvedEvents.setEnabled(false);
     }
 
     public void setUpdateInformationLabel() {
@@ -272,8 +349,6 @@ public class EventViewerWidget {
     public void acknowledgeAllEvents() {
         eventNotifierHandler.acknowledgeAllEvents();
         updateEventTable(eventNotifierHandler.getUnhandledEvents());
-
-
     }
 
     public void acknowledgeSelectedEvent() {

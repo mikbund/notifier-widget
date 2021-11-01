@@ -4,9 +4,8 @@ package dk.notfound.notifier.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.security.Provider;
 import java.sql.Timestamp;
-
-
 
 public class ServiceEntity {
 
@@ -14,19 +13,12 @@ public class ServiceEntity {
 
     String serviceIdentifier;
 
-
+    private Boolean autoAcknowledgeEventOnTimer = false;
     private Long eventAcknowledgeTimer;
 
 
     private Boolean autoAcknowledgeEventOnReception = false;
-
-
-
     Timestamp autoAcknowledgeEventOnReceptionUntilTs;
-
-
-
-    private Boolean autoAcknowledgeEventOnTimer = false;
 
 
     private Timestamp created_ts;
@@ -76,7 +68,6 @@ public class ServiceEntity {
     public void setAutoAcknowledgeEventOnReceptionUntilTs(Timestamp autoAcknowledgeEventOnReceptionUntilTs) {
         this.autoAcknowledgeEventOnReceptionUntilTs = autoAcknowledgeEventOnReceptionUntilTs;
     }
-
 
 
 
