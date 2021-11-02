@@ -12,10 +12,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 import dk.notfound.notifier.controller.EventNotifierHandler;
 import dk.notfound.notifier.model.ServiceEntity;
@@ -88,6 +93,9 @@ public class EventViewerWidget {
         jButtonReloadServiceEntities.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                serviceEntityHandler.addMissingServiceEntities();
+
                 serviceEntityHandler.fetchServiceEntities();
                 displayServiceEntities();
             }
@@ -140,7 +148,10 @@ public class EventViewerWidget {
         Integer selectedRow = jTableServiceEntities.getSelectedRow();
         String cellValue = jTableServiceEntities.getModel().getValueAt(selectedRow,0).toString();
         Long cellId = Long.valueOf(cellValue);
-        
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime localDateTime;
+        Timestamp ts;
 
         ServiceEntity serviceEntity = serviceEntityHandler.getServiceEntityById(cellId);
 
@@ -148,9 +159,10 @@ public class EventViewerWidget {
         serviceEntity.setAutoAcknowledgeEventOnTimer(checkBoxAcknowledgeEventsOnTimer.isSelected());
         serviceEntity.setEventAcknowledgeTimer(Long.valueOf(textFieldAcknowledgeTimer.getText().toString().trim()));
 
+        localDateTime = LocalDateTime.parse(textFieldAcknowledgeUntilTS.getText(),formatter);
+        ts = Timestamp.valueOf(localDateTime);
 
-        serviceEntity.setAutoAcknowledgeEventOnReceptionUntilTs();
-
+        serviceEntity.setAutoAcknowledgeEventOnReceptionUntilTs(ts);
 
         serviceEntityHandler.saveServiceEntity(serviceEntity);
 
@@ -168,7 +180,7 @@ public class EventViewerWidget {
 
             serviceEntity = serviceEntityHandler.getServiceEntityById(cellValue);
             textFieldAcknowledgeTimer.setText(serviceEntity.getEventAcknowledgeTimer().toString());
-            textFieldAcknowledgeUntilTS.setText(serviceEntity.getAutoAcknowledgeEventOnReceptionUntilTs().toString());
+            textFieldAcknowledgeUntilTS.setText(serviceEntity.getAutoAcknowledgeEventOnReceptionUntilTs().toLocalDateTime().format(serviceEntityHandler.dateTimeFormatter()));
             checkBoxAcknowledgeEventsOnTimer.setSelected(serviceEntity.getAutoAcknowledgeEventOnTimer());
             checkBoxAcknowledgeOnReception.setSelected(serviceEntity.getAutoAcknowledgeEventOnReception());
         } catch(Exception e) {
@@ -227,15 +239,26 @@ public class EventViewerWidget {
     public void displayServiceEntities() {
 
         Collection<ServiceEntity> serviceEntities = serviceEntityHandler.getServiceEntityCollection();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        LocalDateTime current_date_time = LocalDateTime.now();
+        Timestamp timestamp_object = Timestamp.valueOf(current_date_time);
+
 
         modelServiceEntities.setRowCount(0);
 
+
         for(ServiceEntity se: serviceEntities) {
+
+            if(se.getAutoAcknowledgeEventOnReceptionUntilTs()==null)
+                se.setAutoAcknowledgeEventOnReceptionUntilTs(timestamp_object);
+
+
                     String[] row = {
                                         se.getId().toString(),
                                         se.getServiceIdentifier(),
                                         se.getAutoAcknowledgeEventOnReception().toString(),
-                                        se.getAutoAcknowledgeEventOnReceptionUntilTs().toString(),
+                                        se.getAutoAcknowledgeEventOnReceptionUntilTs().toLocalDateTime().format(serviceEntityHandler.dateTimeFormatter()).toString(),
                                         se.getAutoAcknowledgeEventOnTimer().toString(),
                                         se.getEventAcknowledgeTimer().toString(),
                                     };

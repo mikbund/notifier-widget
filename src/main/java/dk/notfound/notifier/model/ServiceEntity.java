@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 
 public class ServiceEntity {
 
+
+
     private Long id;
 
     String serviceIdentifier;
@@ -29,6 +31,10 @@ public class ServiceEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public void setServiceIdentifier(String serviceIdentifier) {
+        this.serviceIdentifier=serviceIdentifier;
     }
 
     public void setEventAcknowledgeTimer(Long eventAcknowledgeTimer) {

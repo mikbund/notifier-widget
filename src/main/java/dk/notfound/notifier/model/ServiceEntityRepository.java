@@ -83,41 +83,23 @@ public class ServiceEntityRepository {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         System.out.println("URL: " + url);
-        restTemplate.put(url, serviceEntity, Event.class);
+        restTemplate.put(url, serviceEntity, ServiceEntity.class);
 
     }
 
 
-/*
-    public void patchServiceEntity(ServiceEntity serviceEntity)  {
 
-        Long id = serviceEntity.getId();
+    public void createServiceEntity(ServiceEntity serviceEntity) {
 
-//        RestTemplate restTemplate = new RestTemplate();
+        String url = configLoader.getListServiceEntities();
 
+        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String url = configLoader.getListServiceEntities() + "/" + id.toString();
-        System.out.println("Patch serviceEntity: " + url);
-
-        final HttpEntity<ServiceEntity> entity = new HttpEntity<ServiceEntity>(serviceEntity);
-
-//        final HttpEntity<String> entity = new HttpEntity<Serv>(JSON.toJSONString(serviceEntity), headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PATCH, entity, String.class);
-          //  String statusCode =  response.getStatusCode();
-        } catch (HttpClientErrorException e) {
-            // handle exception here
-        }
+        System.out.println("URL: " + url);
+        restTemplate.postForObject(url,serviceEntity,ServiceEntity.class);
     }
-
-
- */
 
 
 
