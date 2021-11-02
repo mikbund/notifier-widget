@@ -51,6 +51,7 @@ public class EventViewerWidget {
     private JCheckBox checkBoxAcknowledgeOnReception;
     private JFormattedTextField textFieldAcknowledgeTimer;
     private JFormattedTextField textFieldAcknowledgeUntilTS;
+    private JButton jButtonDeleteServiceEntity;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
     private ServiceEntityHandler serviceEntityHandler = new ServiceEntityHandler();
 
@@ -95,7 +96,6 @@ public class EventViewerWidget {
             public void actionPerformed(ActionEvent e) {
 
                 serviceEntityHandler.addMissingServiceEntities();
-
                 serviceEntityHandler.fetchServiceEntities();
                 displayServiceEntities();
             }
@@ -110,7 +110,12 @@ public class EventViewerWidget {
             }
         });
 
-
+        jButtonDeleteServiceEntity.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteServiceEntity();
+            }
+        });
 
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
@@ -140,6 +145,18 @@ public class EventViewerWidget {
                     updateServiceEntitiesTextFieldsFromTbl();
             }
         });
+
+    }
+
+
+    public void deleteServiceEntity() {
+
+        Integer selectedRow = jTableServiceEntities.getSelectedRow();
+        String cellValue = jTableServiceEntities.getModel().getValueAt(selectedRow,0).toString();
+        Long cellId = Long.valueOf(cellValue);
+
+        serviceEntityHandler.deleteServiceEntity(cellId);
+        displayServiceEntities();
 
     }
 

@@ -75,6 +75,29 @@ public class ServiceEntity {
         this.autoAcknowledgeEventOnReceptionUntilTs = autoAcknowledgeEventOnReceptionUntilTs;
     }
 
+    @Override
+    public String toString() {
 
+        String out = "";
+        try {
+            out = "id: " + getId() +
+                    " serviceIdentifier: " + getServiceIdentifier() +
+                    " AcknowledgeEventOnReceptionUntilTs: " + getAutoAcknowledgeEventOnReceptionUntilTs() +
+                    " AutoAcknowledgeEventOnReception: " + getAutoAcknowledgeEventOnReception() +
+                    " AcknowledgeTimer: " + getEventAcknowledgeTimer() +
+                    " AcknowledgeEventOnReceptionUntilTs:  " + getAutoAcknowledgeEventOnReceptionUntilTs();
+
+        } catch(NullPointerException e) {
+            out = "id: " + "NULL" +
+                    " serviceIdentifier: " + getServiceIdentifier() +
+                    " AcknowledgeEventOnReceptionUntilTs: " + getAutoAcknowledgeEventOnReceptionUntilTs() +
+                    " AutoAcknowledgeEventOnReception: " + getAutoAcknowledgeEventOnReception() +
+                    " AcknowledgeTimer: " + getEventAcknowledgeTimer() +
+                    " AcknowledgeEventOnReceptionUntilTs:  " + getAutoAcknowledgeEventOnReceptionUntilTs();
+
+        }
+
+        return out;
+    }
 
 }

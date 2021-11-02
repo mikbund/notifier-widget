@@ -84,6 +84,7 @@ public class ServiceEntityRepository {
 
         System.out.println("URL: " + url);
         restTemplate.put(url, serviceEntity, ServiceEntity.class);
+        //restTemplate.postForObject(url,serviceEntity,ServiceEntity.class);
 
     }
 
@@ -97,10 +98,25 @@ public class ServiceEntityRepository {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        System.out.println("URL: " + url);
+        System.out.println("URL: " + url + "String:" + serviceEntity.toString());
         restTemplate.postForObject(url,serviceEntity,ServiceEntity.class);
     }
 
+
+
+
+    public void deleteServiceEntity(Long id) {
+
+        String url = configLoader.getListServiceEntities() + "/" + id.toString();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        System.out.println("Delete ressource: URL: " + url);
+        restTemplate.delete(url);
+
+    }
 
 
 

@@ -62,25 +62,31 @@ public class ServiceEntityHandler {
             serviceEntityRepository.patchServiceEntity(se);
     }
 
+
+    public void deleteServiceEntity(Long id) {
+        serviceEntityRepository.deleteServiceEntity(id);
+        fetchServiceEntities();
+    }
+
     public void addMissingServiceEntities() {
+
 
         fetchServiceEntities();
 
         HashSet<String> serviceIdentitySet = new HashSet<>();
 
-        for(Event event: eventRepository.getUnhandledEvents()) {
-            serviceIdentitySet.add("".concat(event.getServiceIdentifier()) );
+        // create a list of service identifiers from event table including unhandled and handled.
+        for(Event event: eventRepository.getEvents()) {
+            serviceIdentitySet.add("".concat(event.getServiceIdentifier()).toUpperCase() );
         }
 
+        //remove existing services -as they should not be added to list
         for(ServiceEntity se: this.getServiceEntityCollection()) {
-            serviceIdentitySet.remove("".concat(se.getServiceIdentifier()));
+            serviceIdentitySet.remove("".concat(se.getServiceIdentifier()).toUpperCase() );
         }
 
-
-
-
+        // create services that are in list as they don't exist in service_entitity table.
         for(String s: serviceIdentitySet) {
-            System.out.println(s + "     " + s.hashCode() ) ;
 
             ServiceEntity se = new ServiceEntity();
             se.setServiceIdentifier(s);
@@ -88,14 +94,9 @@ public class ServiceEntityHandler {
             se.setEventAcknowledgeTimer(0L);
             se.setAutoAcknowledgeEventOnTimer(false);
 
-
             serviceEntityRepository.createServiceEntity(se);
 
         }
-
-
-
-
 
     }
 
