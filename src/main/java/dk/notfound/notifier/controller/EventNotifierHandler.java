@@ -48,7 +48,6 @@ public class EventNotifierHandler {
 
 
 
-
     public void acknowledgeAllEvents() {
 
         for(Event e: eventRepository.getUnhandledEvents()) {

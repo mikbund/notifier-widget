@@ -11,16 +11,11 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 
 import dk.notfound.notifier.controller.EventNotifierHandler;
 import dk.notfound.notifier.model.ServiceEntity;
@@ -52,6 +47,7 @@ public class EventViewerWidget {
     private JFormattedTextField textFieldAcknowledgeTimer;
     private JFormattedTextField textFieldAcknowledgeUntilTS;
     private JButton jButtonDeleteServiceEntity;
+    private JButton jButtonAutoClose;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
     private ServiceEntityHandler serviceEntityHandler = new ServiceEntityHandler();
 
@@ -98,6 +94,14 @@ public class EventViewerWidget {
                 serviceEntityHandler.addMissingServiceEntities();
                 serviceEntityHandler.fetchServiceEntities();
                 displayServiceEntities();
+            }
+        });
+
+        jButtonAutoClose.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                autoAcknowledgeEvent();
+                acknowledgeSelectedEvent();
             }
         });
 
@@ -149,6 +153,17 @@ public class EventViewerWidget {
     }
 
 
+    public void autoAcknowledgeEvent() {
+        String serviceIdentifier;
+        Integer selectedRow = jTableEventList.getSelectedRow();
+
+        serviceIdentifier = jTableEventList.getModel().getValueAt(selectedRow,2).toString();
+        if(serviceIdentifier!=null)
+            serviceEntityHandler.autoAcknowledgeEvent(serviceIdentifier, configLoader.getDefaultAutoAcknowledgeTime());
+
+    }
+
+
     public void deleteServiceEntity() {
 
         Integer selectedRow = jTableServiceEntities.getSelectedRow();
@@ -188,7 +203,6 @@ public class EventViewerWidget {
 
     public void updateServiceEntitiesTextFieldsFromTbl() {
 
-
         try {
             Long cellValue;
             ServiceEntity serviceEntity;
@@ -206,11 +220,10 @@ public class EventViewerWidget {
             textFieldAcknowledgeUntilTS.setText("");
             checkBoxAcknowledgeEventsOnTimer.setSelected(false);
             checkBoxAcknowledgeOnReception.setSelected(false);
-
         }
 
 
-        }
+    }
 
 
     public void runWidget() {

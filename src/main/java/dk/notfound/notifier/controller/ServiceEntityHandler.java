@@ -38,6 +38,7 @@ public class ServiceEntityHandler {
     }
 
     public void fetchServiceEntities() {
+
         Collection<ServiceEntity> serviceEntities;
         serviceEntities= serviceEntities=serviceEntityRepository.getServiceEntities();
 
@@ -67,6 +68,36 @@ public class ServiceEntityHandler {
         serviceEntityRepository.deleteServiceEntity(id);
         fetchServiceEntities();
     }
+
+
+    public void autoAcknowledgeEvent(String serviceIdentifier, long timeSeconds) {
+
+        Collection<ServiceEntity> serviceEntities = getServiceEntityCollection();
+        ServiceEntity serviceEntity;
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        localDateTime = localDateTime.plusSeconds(timeSeconds);
+        Timestamp ts;
+        ts = Timestamp.valueOf(localDateTime);
+
+        for(ServiceEntity se: serviceEntities) {
+                if(se.getServiceIdentifier().toUpperCase().equals(serviceIdentifier.toUpperCase())) {
+                    serviceEntity = se;
+
+                    serviceEntity.setAutoAcknowledgeEventOnReception(true);
+                    serviceEntity.setAutoAcknowledgeEventOnReceptionUntilTs(ts);
+
+                    serviceEntityRepository.patchServiceEntity(serviceEntity);
+
+                }
+        }
+
+
+
+
+    }
+
+
 
     public void addMissingServiceEntities() {
 

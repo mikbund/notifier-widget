@@ -69,6 +69,10 @@ public class ConfigLoader
         return properties.getProperty("listUnhandledEvents");
     }
 
+    public long getDefaultAutoAcknowledgeTime() {
+        return Integer.decode(properties.getProperty("defaultAutoAcknowledgeTime"));
+    }
+
     public String getEventResponsible() { return properties.getProperty("eventResponsible"); }
 
     public String getListAllEvents() {
