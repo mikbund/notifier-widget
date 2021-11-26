@@ -50,7 +50,7 @@ public class EventViewerWidget {
     private JButton jButtonAutoClose;
     private EventNotifierHandler eventNotifierHandler = new EventNotifierHandler(this);
     private ServiceEntityHandler serviceEntityHandler = new ServiceEntityHandler();
-
+    private Dimension frameMinimumDimension = new Dimension();
 
     private Boolean muteNotification = false;
     DefaultTableModel model = new DefaultTableModel();
@@ -248,11 +248,14 @@ public class EventViewerWidget {
             modelServiceEntities.addColumn(s);
         }
 
+
+        frameMinimumDimension.setSize(800,400);
+
         frame = new JFrame("Widget");
         frame.setContentPane(alertPanel);
-        frame.setBounds(300,300,300,300);
+        //frame.setBounds(300,300,300,300);
         frame.setTitle("Event notifier");
-        frame.setSize(600,300);
+        frame.setMinimumSize(frameMinimumDimension);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
